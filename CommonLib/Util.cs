@@ -6,12 +6,16 @@ namespace CommonLib
 	{
 		public Util ()
 		{
-			// Constructor
 		}
 
 		public string libInfo()
 		{
-			return "CommonLib.Acoustics \n Version: 0.1, Build: 1";
+			return "CommonLib.Acoustics\nVersion: 0.1";
+		}
+
+		public string classInfo()
+		{
+			return "CommonLib.Acoustics.Util\nUtility class";
 		}
 	}
 }
