@@ -2,18 +2,24 @@
 
 namespace CommonLib
 {
-	public class Util
+	public static class Util
 	{
-		public Util ()
+		static Util ()
 		{
 		}
 
-		public string libInfo()
+		public static void WriteLine(string message)
+		{
+			var time = DateTime.Now.ToString ("h:mm:ss tt");
+			Console.WriteLine("[" + time + "] " + message);
+		}
+
+		public static string libInfo()
 		{
 			return "CommonLib.Acoustics\nVersion: 0.1";
 		}
 
-		public string classInfo()
+		public static string classInfo()
 		{
 			return "CommonLib.Acoustics.Util\nUtility class";
 		}
