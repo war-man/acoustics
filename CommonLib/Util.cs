@@ -8,10 +8,16 @@ namespace CommonLib
 		{
 		}
 
-		public static void WriteLine(string message)
+		public static void WriteLine(string message, ConsoleColor textColor = ConsoleColor.White, ConsoleColor bgColor = ConsoleColor.Black)
 		{
 			var time = DateTime.Now.ToString ("h:mm:ss tt");
+
+			Console.ForegroundColor = textColor;
+			Console.BackgroundColor = bgColor;
+
 			Console.WriteLine("[" + time + "] " + message);
+
+			Console.ResetColor ();
 		}
 
 		public static string libInfo()
