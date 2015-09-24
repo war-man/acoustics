@@ -20,6 +20,16 @@ namespace CommonLib
 			Console.ResetColor ();
 		}
 
+		public static void Write(string message, ConsoleColor textColor = ConsoleColor.White, ConsoleColor bgColor = ConsoleColor.Black)
+		{
+			Console.ForegroundColor = textColor;
+			Console.BackgroundColor = bgColor;
+
+			Console.Write(message);
+
+			Console.ResetColor ();
+		}
+
 		public static string libInfo()
 		{
 			return "CommonLib.Acoustics\nVersion: 0.1";
