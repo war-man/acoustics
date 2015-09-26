@@ -12,10 +12,12 @@ namespace CommonLib
 		{
 			var time = DateTime.Now.ToString ("h:mm:ss tt");
 
+			Console.Write ("[" + time + "] ");
+
 			Console.ForegroundColor = textColor;
 			Console.BackgroundColor = bgColor;
 
-			Console.WriteLine("[" + time + "] " + message);
+			Console.WriteLine (message);
 
 			Console.ResetColor ();
 		}
