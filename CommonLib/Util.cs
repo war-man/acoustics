@@ -12,7 +12,7 @@ namespace CommonLib
 		{
 			var time = DateTime.Now.ToString ("h:mm:ss tt");
 
-			Console.Write ("[" + time + "] ");
+			if (message != "") Console.Write ("[" + time + "] "); //Only print time if message has value
 
 			Console.ForegroundColor = textColor;
 			Console.BackgroundColor = bgColor;
