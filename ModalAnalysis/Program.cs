@@ -19,7 +19,8 @@ namespace ModalAnalysis
 			CommonLib.Util.Write ("\t\t Length: " + rL.ToString() + "m\n");
 			CommonLib.Util.Write ("\t\t Width:  " + rW.ToString() + "m\n");
 			CommonLib.Util.Write ("\t\t Height: " + rH.ToString() + "m\n");
-			CommonLib.Util.WriteLine ("Speed of sound: " + v.ToString() + "m/s\n");
+			CommonLib.Util.WriteLine ("Speed of sound: " + v.ToString() + "m/s");
+			CommonLib.Util.Write ("--------------------------------------------------\n\n");
 
 			Calculate ();
 		}
@@ -58,8 +59,21 @@ namespace ModalAnalysis
 		/// </summary>
 		static void Calculate ()
 		{
+			//Critical frequency
 			double rCF = CriticalFrequency ();
-			CommonLib.Util.WriteLine ("Critical Frequency: " + rCF.ToString() + "Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
+			CommonLib.Util.WriteLine ("Critical Frequency: ");
+			CommonLib.Util.Write ("\t\t ");
+			CommonLib.Util.Write (rCF.ToString() + "Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+
+			//Fundamental axial modes
+			double[] rFAM = CalculateAxialModes ();
+			CommonLib.Util.WriteLine ("Fundamental Axial Modes:");
+			CommonLib.Util.Write ("\t\t ");
+			CommonLib.Util.Write ("Length: " + rFAM [0].ToString () + "Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			CommonLib.Util.Write ("\t\t ");
+			CommonLib.Util.Write ("Width:  " + rFAM [1].ToString () + "Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			CommonLib.Util.Write ("\t\t ");
+			CommonLib.Util.Write ("Height: " + rFAM [2].ToString () + "Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
 		}
 
 		/// <summary>
@@ -83,9 +97,23 @@ namespace ModalAnalysis
 			double rMFP = 4*(rVol/rS);
 
 			//Calculate critical frequency
-			double rCF = 1.5 * v/rMFP;
+			double rCF = 1.5 * (v/rMFP);
 
 			return rCF;
+		}
+
+		/// <summary>
+		/// Calculates the axial modes.
+		/// </summary>
+		/// <returns>Axial Modes (as double array, in Hz)</returns>
+		static double[] CalculateAxialModes ()
+		{
+			double[] am = new double[3];
+			am[0] = v/(2 * rL); //Length fundamental axial mode
+			am[1] = v/(2 * rW); //Width fundamental axial mode
+			am[2] = v/(2 * rH); //Height fundamental axial mode
+
+			return am;
 		}
 	}
 }
