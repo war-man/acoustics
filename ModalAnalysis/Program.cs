@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ModalAnalysis
 {
@@ -23,6 +24,8 @@ namespace ModalAnalysis
 			CommonLib.Util.Write ("--------------------------------------------------\n\n");
 
 			Calculate ();
+
+			Console.ReadKey (); 
 		}
 
 		static void ParseArgs (string[] args)
@@ -63,17 +66,46 @@ namespace ModalAnalysis
 			double rCF = CriticalFrequency ();
 			CommonLib.Util.WriteLine ("Critical Frequency: ");
 			CommonLib.Util.Write ("\t\t ");
-			CommonLib.Util.Write (rCF.ToString() + "Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			CommonLib.Util.Write (rCF.ToString() + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
 
 			//Fundamental axial modes
 			double[] rFAM = CalculateAxialModes ();
 			CommonLib.Util.WriteLine ("Fundamental Axial Modes:");
 			CommonLib.Util.Write ("\t\t ");
-			CommonLib.Util.Write ("Length: " + rFAM [0].ToString () + "Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			CommonLib.Util.Write ("Length: " + rFAM [0].ToString () + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
 			CommonLib.Util.Write ("\t\t ");
-			CommonLib.Util.Write ("Width:  " + rFAM [1].ToString () + "Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			CommonLib.Util.Write ("Width:  " + rFAM [1].ToString () + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
 			CommonLib.Util.Write ("\t\t ");
-			CommonLib.Util.Write ("Height: " + rFAM [2].ToString () + "Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			CommonLib.Util.Write ("Height: " + rFAM [2].ToString () + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+
+			//Axial Harmonics
+			List<double> rLamH = CalculateAxialHarmonics (rFAM [0], rCF); //Calculates axial harmonics for Length
+			List<double> rWamH = CalculateAxialHarmonics (rFAM [1], rCF); //Calculates axial harmonics for Width
+			List<double> rHamH = CalculateAxialHarmonics (rFAM [2], rCF); //Calculates axial harmonics for Height
+			CommonLib.Util.WriteLine ("Axial Mode Harmonics");
+			CommonLib.Util.Write ("\t\t ");
+			CommonLib.Util.Write ("L1: " + rFAM [0] + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			rLamH.ForEach(delegate (double amH){
+				int index = rLamH.IndexOf(amH) + 2;
+				CommonLib.Util.Write ("\t\t ");
+				CommonLib.Util.Write("L" + index + ": " + amH.ToString() + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			});
+			CommonLib.Util.WriteLine ("");
+			CommonLib.Util.Write ("\t\t ");
+			CommonLib.Util.Write ("W1: " + rFAM [1] + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			rWamH.ForEach(delegate (double amH){
+				int index = rWamH.IndexOf(amH) + 2;
+				CommonLib.Util.Write ("\t\t ");
+				CommonLib.Util.Write("W" + index + ": " + amH.ToString() + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			});
+			CommonLib.Util.WriteLine ("");
+			CommonLib.Util.Write ("\t\t ");
+			CommonLib.Util.Write ("H1: " + rFAM [2] + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			rHamH.ForEach(delegate (double amH){
+				int index = rHamH.IndexOf(amH) + 2;
+				CommonLib.Util.Write ("\t\t ");
+				CommonLib.Util.Write("H" + index + ": " + amH.ToString() + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
+			});
 		}
 
 		/// <summary>
@@ -114,6 +146,31 @@ namespace ModalAnalysis
 			am[2] = v/(2 * rH); //Height fundamental axial mode
 
 			return am;
+		}
+
+		/// <summary>
+		/// Calculates the harmonics of the fundamental axial modes, up to the critical frequency
+		/// </summary>
+		/// <returns>Axial Harmonics (as double list, in Hz)</returns>
+		static List<double> CalculateAxialHarmonics (double rFAM, double rCF)
+		{
+			List<double> amH = new List<double>(); //List instead of array because the number of harmonics is unknown
+
+			int i = 2;
+			double lastHarmonic = 0;
+			while (lastHarmonic <= rCF)
+			{
+				double currentHarmonic = i * rFAM;
+
+				amH.Add(currentHarmonic);
+
+				lastHarmonic = currentHarmonic;
+				i++;
+			}
+
+			amH.RemoveAt (i - 3); //Removes the final list item, as it will always be higher than the critical frequency
+
+			return amH;
 		}
 	}
 }
