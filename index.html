@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Acoustics by sam210723</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <meta name="viewport" content="width=device-width">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Acoustics</h1>
+        <p>A collection of acoustic utilities written in C#.</p>
+
+        <p class="view"><a href="https://github.com/sam210723/acoustics">View the Project on GitHub <small>sam210723/acoustics</small></a></p>
+
+
+        <ul>
+          <li><a href="https://github.com/sam210723/acoustics/zipball/master">Download <strong>ZIP File</strong></a></li>
+          <li><a href="https://github.com/sam210723/acoustics/tarball/master">Download <strong>TAR Ball</strong></a></li>
+          <li><a href="https://github.com/sam210723/acoustics">View On <strong>GitHub</strong></a></li>
+        </ul>
+      </header>
+      <section>
+        <h1>
+<a id="modal-analysis" class="anchor" href="#modal-analysis" aria-hidden="true"><span class="octicon octicon-link"></span></a>Modal Analysis</h1>
+
+<p>Performs a <a href="https://en.wikipedia.org/wiki/Modal_analysis">modal analysis</a> on an empty room, assuming flat walls.</p>
+
+<h3>
+<a id="method" class="anchor" href="#method" aria-hidden="true"><span class="octicon octicon-link"></span></a>Method</h3>
+
+<ol>
+<li>Calculate the critical frequency of the given room:
+
+<ul>
+<li>Calculate the volume of the room.</li>
+<li>Calculate the surface area of the room (4 walls + roof + floor, flat planes).</li>
+<li>Calculate the <a href="https://en.wikipedia.org/wiki/Mean_free_path">mean free path</a> (MFP).</li>
+<li>Calculate the critical frequency.</li>
+</ul>
+</li>
+<li>Calculate the fundamental axial modes for each axis
+
+<ul>
+<li><code>f = v/2D</code></li>
+<li>Where <code>D = Axis length (m)</code> and <code>v = Speed of sound (m/s)</code>
+</li>
+</ul>
+</li>
+<li>Calculate axial mode harmonics up to critical frequency</li>
+<li>Sort harmonics for all axes</li>
+<li>Find coincidences</li>
+<li>Find spacings</li>
+</ol>
+
+<h3>
+<a id="usage" class="anchor" href="#usage" aria-hidden="true"><span class="octicon octicon-link"></span></a>Usage</h3>
+
+<table>
+<thead>
+<tr>
+<th>Argument</th>
+<th>Description</th>
+<th>Type</th>
+<th>Unit</th>
+<th>Optional</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>-l</td>
+<td>Room length</td>
+<td>Double</td>
+<td>Hertz</td>
+<td>No</td>
+</tr>
+<tr>
+<td>-w</td>
+<td>Room width</td>
+<td>Double</td>
+<td>Hertz</td>
+<td>No</td>
+</tr>
+<tr>
+<td>-h</td>
+<td>Room height</td>
+<td>Double</td>
+<td>Hertz</td>
+<td>No</td>
+</tr>
+<tr>
+<td>-v</td>
+<td>Speed of sound</td>
+<td>Double</td>
+<td>m/s</td>
+<td>Yes (default 344m/s)</td>
+</tr>
+</tbody>
+</table>
+      </section>
+      <footer>
+        <p>This project is maintained by <a href="https://github.com/sam210723">sam210723</a></p>
+        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
+      </footer>
+    </div>
+    <script src="javascripts/scale.fix.js"></script>
+              <script type="text/javascript">
+            var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+            document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+          </script>
+          <script type="text/javascript">
+            try {
+              var pageTracker = _gat._getTracker("UA-60758177-6");
+            pageTracker._trackPageview();
+            } catch(err) {}
+          </script>
+
+  </body>
+</html>
