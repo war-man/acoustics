@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 
 namespace ModalAnalysis
@@ -25,7 +26,7 @@ namespace ModalAnalysis
 
 			Calculate ();
 
-			Console.ReadKey (); 
+			Console.ReadKey ();
 		}
 
 		static void ParseArgs (string[] args)
@@ -64,7 +65,7 @@ namespace ModalAnalysis
 		{
 			//Critical frequency
 			double rCF = CriticalFrequency ();
-			CommonLib.Util.WriteLine ("Critical Frequency: ");
+			CommonLib.Util.WriteLine ("Critical Frequency:");
 			CommonLib.Util.Write ("\t\t ");
 			CommonLib.Util.Write (rCF.ToString() + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
 
@@ -78,34 +79,42 @@ namespace ModalAnalysis
 			CommonLib.Util.Write ("\t\t ");
 			CommonLib.Util.Write ("Height: " + rFAM [2].ToString () + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
 
-			//Axial Harmonics
-			List<double> rLamH = CalculateAxialHarmonics (rFAM [0], rCF); //Calculates axial harmonics for Length
-			List<double> rWamH = CalculateAxialHarmonics (rFAM [1], rCF); //Calculates axial harmonics for Width
-			List<double> rHamH = CalculateAxialHarmonics (rFAM [2], rCF); //Calculates axial harmonics for Height
-			CommonLib.Util.WriteLine ("Axial Mode Harmonics");
-			CommonLib.Util.Write ("\t\t ");
-			CommonLib.Util.Write ("L1: " + rFAM [0] + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
-			rLamH.ForEach(delegate (double amH){
-				int index = rLamH.IndexOf(amH) + 2;
+			//Axial harmonics
+			List<KeyValuePair<string, double>> rLamH = CalculateAxialHarmonics (rFAM [0], rCF, "L"); //Calculates axial harmonics for Length
+			List<KeyValuePair<string, double>> rWamH = CalculateAxialHarmonics (rFAM [1], rCF, "W"); //Calculates axial harmonics for Width
+			List<KeyValuePair<string, double>> rHamH = CalculateAxialHarmonics (rFAM [2], rCF, "H"); //Calculates axial harmonics for Height
+			CommonLib.Util.WriteLine ("Axial Mode Harmonics:");
+			foreach (var harm in rLamH){
 				CommonLib.Util.Write ("\t\t ");
-				CommonLib.Util.Write("L" + index + ": " + amH.ToString() + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
-			});
+				CommonLib.Util.Write(harm.Key + ": " + harm.Value.ToString() + " Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
+				CommonLib.Util.Write("\n");
+			}
 			CommonLib.Util.WriteLine ("");
-			CommonLib.Util.Write ("\t\t ");
-			CommonLib.Util.Write ("W1: " + rFAM [1] + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
-			rWamH.ForEach(delegate (double amH){
-				int index = rWamH.IndexOf(amH) + 2;
+			foreach (var harm in rWamH){
 				CommonLib.Util.Write ("\t\t ");
-				CommonLib.Util.Write("W" + index + ": " + amH.ToString() + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
-			});
+				CommonLib.Util.Write(harm.Key + ": " + harm.Value.ToString() + " Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
+				CommonLib.Util.Write("\n");
+			}
 			CommonLib.Util.WriteLine ("");
-			CommonLib.Util.Write ("\t\t ");
-			CommonLib.Util.Write ("H1: " + rFAM [2] + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
-			rHamH.ForEach(delegate (double amH){
-				int index = rHamH.IndexOf(amH) + 2;
+			foreach (var harm in rHamH){
 				CommonLib.Util.Write ("\t\t ");
-				CommonLib.Util.Write("H" + index + ": " + amH.ToString() + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
-			});
+				CommonLib.Util.Write(harm.Key + ": " + harm.Value.ToString() + " Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
+				CommonLib.Util.Write("\n");
+			}
+
+			//Sort harmonics
+			List<KeyValuePair<string, double>> ramH = new List<KeyValuePair<string, double>>(rLamH.Count + rWamH.Count + rHamH.Count + 3); // Plus 3 for fundamentals
+			ramH.AddRange (rLamH);
+			ramH.AddRange (rWamH);
+			ramH.AddRange (rHamH);
+			List<KeyValuePair<string, double>> ramHS = SortHarmonics (ramH);
+			CommonLib.Util.WriteLine ("");
+			CommonLib.Util.WriteLine ("Sorted Axial Mode Harmonics:");
+			foreach (var harm in ramHS){
+				CommonLib.Util.Write ("\t\t ");
+				CommonLib.Util.Write(harm.Key + ": " + harm.Value.ToString() + " Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
+				CommonLib.Util.Write("\n");
+			}
 		}
 
 		/// <summary>
@@ -152,9 +161,11 @@ namespace ModalAnalysis
 		/// Calculates the harmonics of the fundamental axial modes, up to the critical frequency
 		/// </summary>
 		/// <returns>Axial Harmonics (as double list, in Hz)</returns>
-		static List<double> CalculateAxialHarmonics (double rFAM, double rCF)
+		static List<KeyValuePair<string, double>> CalculateAxialHarmonics (double rFAM, double rCF, string axis)
 		{
-			List<double> amH = new List<double>(); //List instead of array because the number of harmonics is unknown
+			List<KeyValuePair<string, double>> amH = new List<KeyValuePair<string, double>>(); //List instead of array because the number of harmonics is unknown
+
+			amH.Add (new KeyValuePair<string, double> (axis + "1", rFAM));
 
 			int i = 2;
 			double lastHarmonic = 0;
@@ -162,15 +173,24 @@ namespace ModalAnalysis
 			{
 				double currentHarmonic = i * rFAM;
 
-				amH.Add(currentHarmonic);
+				amH.Add(new KeyValuePair<string, double>(axis + i.ToString(), currentHarmonic));
 
 				lastHarmonic = currentHarmonic;
 				i++;
 			}
 
-			amH.RemoveAt (i - 3); //Removes the final list item, as it will always be higher than the critical frequency
+			amH.RemoveAt (i - 2); //Removes the final list item, as it will always be higher than the critical frequency
 
 			return amH;
+		}
+
+		/// <summary>
+		/// Sorts the harmonics.
+		/// </summary>
+		/// <returns>Sorted harmonics (as double list, in Hz)</returns>
+		static List<KeyValuePair<string, double>> SortHarmonics(List<KeyValuePair<string, double>> ramH)
+		{
+			return ramH.OrderBy(a=>a.Value).ToList();
 		}
 	}
 }
