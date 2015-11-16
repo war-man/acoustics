@@ -122,6 +122,11 @@ namespace ModalAnalysis
 			CommonLib.Util.WriteLine ("");
 			CommonLib.Util.WriteLine ("Coincidences:");
 			FindCoincidences(ramHS);
+
+			//Find Spacings
+			CommonLib.Util.WriteLine ("");
+			CommonLib.Util.WriteLine ("Spacings:");
+			FindSpacings(ramHS);
 		}
 
 		/// <summary>
@@ -137,12 +142,16 @@ namespace ModalAnalysis
 		{
 			//Calculate room volume
 			double rVol = rL * rW * rH;
+			CommonLib.Util.WriteLine("Room volume: " + rVol + " m^3", ConsoleColor.White, ConsoleColor.DarkGreen);
 
 			//Calculate room surface area
 			double rS = 2 * ((rL * rW) + (rL * rH) + (rW * rH));
+			CommonLib.Util.WriteLine("Room surface area: " + rS + " m^2", ConsoleColor.White, ConsoleColor.DarkGreen);
 
 			//Calculate MFP
 			double rMFP = 4*(rVol/rS);
+			CommonLib.Util.WriteLine("Mean Free Path (MPF): " + rMFP + " m", ConsoleColor.White, ConsoleColor.DarkGreen);
+			CommonLib.Util.WriteLine ("");
 
 			//Calculate critical frequency
 			double rCF = 1.5 * (v/rMFP);
@@ -204,21 +213,37 @@ namespace ModalAnalysis
 		/// Finds the coincidences.
 		/// </summary>
 		/// <returns>Coincidences (as string/double KeyValuePair, in Hz)</returns>
-		static List<KeyValuePair<string, double>> FindCoincidences (List<KeyValuePair<string, double>> ramHS)
+		static void FindCoincidences (List<KeyValuePair<string, double>> ramHS)
 		{
 			for (int i = 0; i < ramHS.Count - 1; i++)
 			{
 				KeyValuePair<string, double> freqA = ramHS [i];
 				KeyValuePair<string, double> freqB = ramHS [i + 1];
+				double diff = Math.Round(freqB.Value) - Math.Round(freqA.Value);
 
-				if (freqA.Value == freqB.Value) {
+				if (((diff/freqB.Value) * 100) <= 0.05) {
 					CommonLib.Util.Write ("\t\t ");
-					CommonLib.Util.Write (freqA.Key + ", " + freqB.Key + ": " + freqA.Value + " Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
+					CommonLib.Util.Write (freqA.Key + ", " + freqB.Key + ": " + diff + " Hz (" + Math.Round((diff/freqB.Value) * 100).ToString() + "%) @ " +
+						"" + freqA.Value + " Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
 					CommonLib.Util.Write ("\n");
 				}
 			}
+		}
 
-			return ramHS;
+		static void FindSpacings (List<KeyValuePair<string, double>> ramHS)
+		{
+			for (int i = 0; i < ramHS.Count - 1; i++)
+			{
+				KeyValuePair<string, double> freqA = ramHS [i];
+				KeyValuePair<string, double> freqB = ramHS [i + 1];
+				double diff = Math.Round(freqB.Value) - Math.Round(freqA.Value);
+
+				if (diff >= 25) {
+					CommonLib.Util.Write ("\t\t ");
+					CommonLib.Util.Write (freqA.Key + " <--> " + freqB.Key, ConsoleColor.White, ConsoleColor.DarkGreen);
+					CommonLib.Util.Write ("\n");
+				}
+			}
 		}
 	}
 }
