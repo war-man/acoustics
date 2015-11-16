@@ -71,6 +71,7 @@ namespace ModalAnalysis
 
 			//Fundamental axial modes
 			double[] rFAM = CalculateAxialModes ();
+			CommonLib.Util.WriteLine ("");
 			CommonLib.Util.WriteLine ("Fundamental Axial Modes:");
 			CommonLib.Util.Write ("\t\t ");
 			CommonLib.Util.Write ("Length: " + rFAM [0].ToString () + " Hz\n", ConsoleColor.White, ConsoleColor.DarkGreen);
@@ -83,6 +84,7 @@ namespace ModalAnalysis
 			List<KeyValuePair<string, double>> rLamH = CalculateAxialHarmonics (rFAM [0], rCF, "L"); //Calculates axial harmonics for Length
 			List<KeyValuePair<string, double>> rWamH = CalculateAxialHarmonics (rFAM [1], rCF, "W"); //Calculates axial harmonics for Width
 			List<KeyValuePair<string, double>> rHamH = CalculateAxialHarmonics (rFAM [2], rCF, "H"); //Calculates axial harmonics for Height
+			CommonLib.Util.WriteLine ("");
 			CommonLib.Util.WriteLine ("Axial Mode Harmonics:");
 			foreach (var harm in rLamH){
 				CommonLib.Util.Write ("\t\t ");
@@ -115,6 +117,11 @@ namespace ModalAnalysis
 				CommonLib.Util.Write(harm.Key + ": " + harm.Value.ToString() + " Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
 				CommonLib.Util.Write("\n");
 			}
+
+			//Find coincidences
+			CommonLib.Util.WriteLine ("");
+			CommonLib.Util.WriteLine ("Coincidences:");
+			FindCoincidences(ramHS);
 		}
 
 		/// <summary>
@@ -160,7 +167,7 @@ namespace ModalAnalysis
 		/// <summary>
 		/// Calculates the harmonics of the fundamental axial modes, up to the critical frequency
 		/// </summary>
-		/// <returns>Axial Harmonics (as double list, in Hz)</returns>
+		/// <returns>Axial Harmonics (as string/double KeyValuePair, in Hz)</returns>
 		static List<KeyValuePair<string, double>> CalculateAxialHarmonics (double rFAM, double rCF, string axis)
 		{
 			List<KeyValuePair<string, double>> amH = new List<KeyValuePair<string, double>>(); //List instead of array because the number of harmonics is unknown
@@ -187,10 +194,31 @@ namespace ModalAnalysis
 		/// <summary>
 		/// Sorts the harmonics.
 		/// </summary>
-		/// <returns>Sorted harmonics (as double list, in Hz)</returns>
+		/// <returns>Sorted harmonics (as string/double KeyValuePair, in Hz)</returns>
 		static List<KeyValuePair<string, double>> SortHarmonics(List<KeyValuePair<string, double>> ramH)
 		{
 			return ramH.OrderBy(a=>a.Value).ToList();
+		}
+
+		/// <summary>
+		/// Finds the coincidences.
+		/// </summary>
+		/// <returns>Coincidences (as string/double KeyValuePair, in Hz)</returns>
+		static List<KeyValuePair<string, double>> FindCoincidences (List<KeyValuePair<string, double>> ramHS)
+		{
+			for (int i = 0; i < ramHS.Count - 1; i++)
+			{
+				KeyValuePair<string, double> freqA = ramHS [i];
+				KeyValuePair<string, double> freqB = ramHS [i + 1];
+
+				if (freqA.Value == freqB.Value) {
+					CommonLib.Util.Write ("\t\t ");
+					CommonLib.Util.Write (freqA.Key + ", " + freqB.Key + ": " + freqA.Value + " Hz", ConsoleColor.White, ConsoleColor.DarkGreen);
+					CommonLib.Util.Write ("\n");
+				}
+			}
+
+			return ramHS;
 		}
 	}
 }
