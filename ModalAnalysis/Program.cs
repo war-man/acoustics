@@ -50,6 +50,12 @@ namespace ModalAnalysis
 					break;
 				}
 			}
+
+			//Check all required arguments are present
+			if (rL == 0 || rW == 0 || rH == 0) {
+				CommonLib.Util.WriteLine ("Insufficient arguments", ConsoleColor.White, ConsoleColor.Red);
+				System.Environment.Exit (0);
+			}
 		}
 
 		/// <summary>
