@@ -238,6 +238,8 @@ namespace ModalAnalysis
 
 		static void FindSpacings (List<KeyValuePair<string, double>> ramHS)
 		{
+			int spacingCount = 0;
+			
 			for (int i = 0; i < ramHS.Count - 1; i++)
 			{
 				KeyValuePair<string, double> freqA = ramHS [i];
@@ -248,7 +250,14 @@ namespace ModalAnalysis
 					CommonLib.Util.Write ("\t\t ");
 					CommonLib.Util.Write (freqA.Key + " <--> " + freqB.Key, ConsoleColor.White, ConsoleColor.DarkGreen);
 					CommonLib.Util.Write ("\n");
+					spacingCount++;
 				}
+			}
+
+			if (spacingCount == 0) {
+				CommonLib.Util.Write ("\t\t ");
+				CommonLib.Util.Write ("No spacings found!", ConsoleColor.Black, ConsoleColor.White);
+				CommonLib.Util.Write ("\n");
 			}
 		}
 	}
