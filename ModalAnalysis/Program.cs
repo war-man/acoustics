@@ -17,6 +17,8 @@ namespace ModalAnalysis
 
 			ParseArgs (args);
 
+			Console.Title = "Modal Analysis - L: " + rL + ", W: " + rW + ", H: " + rH;
+
 			CommonLib.Util.WriteLine ("Room Properties:");
 			CommonLib.Util.Write ("\t\t Length: " + rL.ToString() + "m\n");
 			CommonLib.Util.Write ("\t\t Width:  " + rW.ToString() + "m\n");
